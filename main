@@ -29,6 +29,12 @@ z0=z0/norm(z0,2)/10;
 options = optimoptions('fmincon','Display','iter-detailed', 'Algorithm','sqp','TolFun',1e-10);
 x = fmincon(@(x) myfun(x,T1,num_of_dim),[x0,y0,z0],A,b,Aeq,beq,lb,ub,@(x)unitdisk(x,num_of_dim),options);
 
+%Compute the error
+xx=x(1:num_of_dim(1));
+yy=x(num_of_dim(1)+1:num_of_dim(1)+num_of_dim(2));
+zz=x(num_of_dim(1)+num_of_dim(2)+1:num_of_dim(1)+num_of_dim(2)+num_of_dim(3));
+error=norm((T1-kron(kron((xx.')*xx, (yy.')*yy),(zz.')*zz)),"fro")^2
+
 function [output]=myfun(unknowns,T1,num_of_dim)
     output = norm(T1-kron(kron((unknowns(1:num_of_dim(1)).')* unknowns(1:num_of_dim(1)), (unknowns(num_of_dim(1)+1:num_of_dim(1)+num_of_dim(2)).')* unknowns(num_of_dim(1)+1:num_of_dim(1)+num_of_dim(2))),(unknowns(num_of_dim(1)+num_of_dim(2)+1:num_of_dim(1)+num_of_dim(2)+num_of_dim(3)).')* unknowns(num_of_dim(1)+num_of_dim(2)+1:num_of_dim(1)+num_of_dim(2)+num_of_dim(3))),"fro")^2;
 end
